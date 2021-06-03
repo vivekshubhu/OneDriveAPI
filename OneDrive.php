@@ -13,9 +13,9 @@ class OneDrive
         $this->graph->setAccessToken($token);
     }
 
-    public function getFilesAndFolders()
+    public function getFoldersOfMainDirectory($mainDirectory)
     {
-        $response = $this->graph->createRequest("GET", "/drive/root/children")
+        $response = $this->graph->createRequest("GET", "/drive/root:/$mainDirectory:/children")
             ->setReturnType(Model\User::class)
             ->execute();
         return $response;
@@ -23,13 +23,13 @@ class OneDrive
 
     public function getFile($fileId)
     {
-        $response = $this->graph->createRequest("GET", "/me/drive/items/$fileId")
+        $response = $this->graph->createRequest("GET", "/drive/items/$fileId")
             ->setReturnType(Model\User::class)
             ->execute();
         return $response;
     }
 
-    public function getFilesInsideFolder($id)
+    public function getFilesByFolderId($id)
     {
         $response = $this->graph->createRequest("GET", "/drive/items/$id/children")
             ->setReturnType(Model\User::class)
@@ -39,19 +39,10 @@ class OneDrive
 
     public function getFilesByFolderName($folderName)
     {
-        //@TODO drive id should be changed
-        // api is like /drives/{drive_id}/root:/{folderName}/{foldername}:/children
-        $response = $this->graph->createRequest("GET", "/drives/4c62e5c68408e692/root:/WebsiteImages/$folderName:/children")
+        $response = $this->graph->createRequest("GET", "/drive/root:/WebsiteImages/$folderName:/children")
             ->setReturnType(Model\User::class)
             ->execute();
         return $response;
-    }
-
-    public function downloadFile($fileName)
-    {
-        $target_dir = './downloads/';
-        $response = $this->graph->createRequest("GET", "/me/drive/root:/document/$fileName:/content")
-            ->download($target_dir . $fileName);
     }
 
     public function uploadFile($file, $fileName, $folderId)
@@ -63,9 +54,19 @@ class OneDrive
 
     public function deleteFile($fileId)
     {
-        $response = $this->graph->createRequest("delete", "/me/drive/items/$fileId")
+        $response = $this->graph->createRequest("delete", "/drive/items/$fileId")
             ->setReturnType(Model\User::class)
             ->execute();
         return $response;
+    }
+
+    public function getDeltaToken()
+    {
+        $response = $this->graph->createRequest("GET", "/drives/b!qr6_XPV0S0qNpOz8TMRdZIB0lzTYzKlJpLDrr8K98DuIA1lgGJHzSr7mwkS_W6_k/root/delta?deltaToken=latest")
+            ->setReturnType(Model\User::class)
+            ->execute();
+        return $response;
+        // https://graph.microsoft.com/v1.0/
+
     }
 }
