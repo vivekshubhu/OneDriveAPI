@@ -12,6 +12,15 @@ $token = $auth->getToken();
 
 // var_dump($token);
 
+//Subscription
 $subscription = new Subscription();
 
-var_dump($subscription->create());
+// var_dump($subscription->create());
+
+
+//OneDrive
+
+$oneDrive = new OneDrive($token);
+$folders = $oneDrive->getFilesByFolderName('CS10');
+
+var_dump($folders);
