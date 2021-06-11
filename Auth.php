@@ -10,7 +10,7 @@ require __DIR__ . './Subscription.php';
 $auth = new AuthToken();
 $token = $auth->getToken();
 
-// var_dump($token);
+var_dump($token);
 
 //Subscription
 $subscription = new Subscription();
@@ -20,7 +20,7 @@ $subscription = new Subscription();
 
 //OneDrive
 
-$oneDrive = new OneDrive($token);
-$folders = $oneDrive->getFilesByFolderName('CS10');
+// $oneDrive = new OneDrive($token);
+// $folders = $oneDrive->getFilesByFolderName('CS10');
 
-var_dump($folders);
+// var_dump($folders);

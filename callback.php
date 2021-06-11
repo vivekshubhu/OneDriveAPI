@@ -2,82 +2,81 @@
 
 // session_start();
 
-// require __DIR__ . '/vendor/autoload.php';
-// require __DIR__ . './OneDriveDelta.php';
-// require __DIR__ . './AuthToken.php';
+require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . './OneDriveDelta.php';
+require __DIR__ . './AuthToken.php';
 
-// $validToken = isset($_GET['validationToken']) ? $_GET['validationToken'] : '';
+$validToken = isset($_GET['validationToken']) ? $_GET['validationToken'] : '';
 // webo_custom_logger('validation', $validToken);
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($validToken) {
     header('Content-Type: text/plain');
     http_response_code(200);
-    // echo $validToken;
-    echo urldecode($_GET['validationToken']);
+    print $validToken;
     exit;
 } else {
-    // $bodytxt = file_get_contents('php://input');
+    $bodytxt = file_get_contents('php://input');
 
-    // $token = getAuthToken();
+    $token = getAuthToken();
 
-    // // if (!isset($_SESSION['deltaToken'])) {
-    // //     setDeltaTokenInSession();
-    // //     webo_custom_logger('delta', $_SESSION['deltaToken']);
-    // // }
-
-    // $arr = include './deltaToken.php';
-
-    // $oneDriveDelta = new OneDriveDelta();
-
-    // //previous delta token passed to get latest changed file
-    // $changedFiles = $oneDriveDelta->getChangedFile($arr['deltaToken']);
-
-    // webo_custom_logger('event', $changedFiles);
-
-    // $filteredChangedArray = array_filter($changedFiles, function ($item) {
-    //     return array_key_exists('file', $item) && !array_key_exists('deleted', $item);
-    // });
-
-    // $filteredDeletedFileIds = array_filter($changedFiles, function ($item) {
-    //     return array_key_exists('deleted', $item);
-    // });
-
-    // $changedFolderNames = [];
-    // $deletedFileIds = [];
-
-    // foreach ($filteredChangedArray as $arr) {
-    //     $path = $arr['parentReference']['path'];
-    //     $folderName = end(explode('/', $path));
-    //     if (!in_array($folderName, $changedFolderNames)) {
-    //         array_push($changedFolderNames, $folderName);
-    //     }
+    // if (!isset($_SESSION['deltaToken'])) {
+    //     setDeltaTokenInSession();
+    //     webo_custom_logger('delta', $_SESSION['deltaToken']);
     // }
 
-    // foreach ($filteredDeletedFileIds as $arr) {
-    //     if (!in_array($arr['id'], $filteredDeletedFileIds)) {
-    //         array_push($deletedFileIds, $arr['id']);
-    //     }
-    // }
+    $arr = include './deltaToken.php';
 
-    // // setDeltaTokenInSession();
-    // webo_custom_logger('event', $changedFolderNames);
-    // webo_custom_logger('event', $deletedFileIds);
-    // file_put_contents('./deltaToken.php', '<?php return $arr = ' . var_export(['deltaToken' => getDeltaToken()], true) . ';');
+    $oneDriveDelta = new OneDriveDelta();
 
-    // return ['changedFolderNames' => $changedFolderNames, 'deletedFileIds' => $deletedFileIds];
+    //previous delta token passed to get latest changed file
+    $changedFiles = $oneDriveDelta->getChangedFile($arr['deltaToken']);
+
+    webo_custom_logger('event', $changedFiles);
+
+    $filteredChangedArray = array_filter($changedFiles, function ($item) {
+        return array_key_exists('file', $item) && !array_key_exists('deleted', $item);
+    });
+
+    $filteredDeletedFileIds = array_filter($changedFiles, function ($item) {
+        return array_key_exists('deleted', $item);
+    });
+
+    $changedFolderNames = [];
+    $deletedFileIds = [];
+
+    foreach ($filteredChangedArray as $arr) {
+        $path = $arr['parentReference']['path'];
+        $folderName = end(explode('/', $path));
+        if (!in_array($folderName, $changedFolderNames)) {
+            array_push($changedFolderNames, $folderName);
+        }
+    }
+
+    foreach ($filteredDeletedFileIds as $arr) {
+        if (!in_array($arr['id'], $filteredDeletedFileIds)) {
+            array_push($deletedFileIds, $arr['id']);
+        }
+    }
+
+    // setDeltaTokenInSession();
+    webo_custom_logger('event', $changedFolderNames);
+    webo_custom_logger('event', $deletedFileIds);
+    file_put_contents('./deltaToken.php', '<?php return $arr = ' . var_export(['deltaToken' => getDeltaToken()], true) . ';');
+
+    return ['changedFolderNames' => $changedFolderNames, 'deletedFileIds' => $deletedFileIds];
 }
 
-// function setDeltaTokenInSession()
-// {
-//     $deltaLinkToken = getDeltaToken();
-//     webo_custom_logger('delta', $deltaLinkToken);
-//     $_SESSION['deltaToken'] = $deltaLinkToken;
-// }
+function setDeltaTokenInSession()
+{
+    $deltaLinkToken = getDeltaToken();
+    webo_custom_logger('delta', $deltaLinkToken);
+    $_SESSION['deltaToken'] = $deltaLinkToken;
+}
 
-// function getDeltaToken()
-// {
-//     $oneDriveDelta = new OneDriveDelta();
-//     return $oneDriveDelta->getDeltaLinkToken();
-// }
+function getDeltaToken()
+{
+    $oneDriveDelta = new OneDriveDelta();
+    return $oneDriveDelta->getDeltaLinkToken();
+}
 
 function webo_custom_logger($fileName, $data)
 {
@@ -97,8 +96,8 @@ function webo_custom_logger($fileName, $data)
     fclose($fp);
 }
 
-// function getAuthToken()
-// {
-//     $authToken = new AuthToken();
-//     return $authToken->getToken();
-// }
+function getAuthToken()
+{
+    $authToken = new AuthToken();
+    return $authToken->getToken();
+}

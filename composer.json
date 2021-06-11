@@ -1,5 +1,5 @@
 {
-    "require": {
-        "microsoft/microsoft-graph": "^1.32"
-    }
+  "require": {
+    "microsoft/microsoft-graph": "^1.32"
+  }
 }
