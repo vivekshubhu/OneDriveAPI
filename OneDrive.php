@@ -3,6 +3,8 @@
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 
+require './AuthToken.php';
+
 class OneDrive
 {
     private $graph;
@@ -13,6 +15,29 @@ class OneDrive
         $this->graph = new Graph();
         $this->graph->setAccessToken($token);
         $this->mainDirectory = 'WebsiteImages';
+    }
+
+    public function createFolder($folderName)
+    {
+        $postData = json_encode([
+            "name" => $folderName,
+            "folder" => [],
+            "@microsoft.graph.conflictBehavior" => "rename"
+        ], JSON_FORCE_OBJECT);
+        
+        try {
+            $response = $this->graph->createRequest("POST", "/drive/root:/$this->mainDirectory:/children")->attachBody($postData)
+                ->setReturnType(Model\User::class)
+                ->execute();
+            $responseJsonDecode = json_decode(json_encode($response), true);
+        } catch (\Exception $e) {
+            echo 'Message:', $e->getMessage();
+        }
+
+        return [
+            "message" => "Folder Created Successfully", 
+            "folder_name" => $responseJsonDecode["name"]
+        ];
     }
 
     public function getFoldersOfMainDirectory()

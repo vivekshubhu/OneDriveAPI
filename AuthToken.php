@@ -2,9 +2,9 @@
 
 class AuthToken
 {
-    private $tenantId = "873d4451-5774-411b-aacb-4e83a725ed0b";
-    private $clientId = "8ba9a7b3-0781-4939-b311-fd8f1d67aef6";
-    private $clientSecret = "fZhn_k_VU3WKQctTF0Jn~.wHQL15-_GB8w";
+    private $tenantId = "1fcbc3e3-8c2a-4e70-9451-a3ea63f56f38";
+    private $clientId = "f6e0d0cc-8387-4002-be55-562a2c2675d9";
+    private $clientSecret = "8iq.e8er4A-ov86Ct22__XzmQzYk03aTrD";
     // private $redirectUrl = 'http://localhost:8000/callback.php';
 
     public function __construct()
